@@ -22,8 +22,19 @@ let snake = [
     {x:unitSize, y:0},
     {x:0, y:0}
 ];
+const leftArrow = document.querySelector("#leftArrow");
+const rightArrow = document.querySelector("#rightArrow");
+const upArrow = document.querySelector("#upArrow");
+const downArrow = document.querySelector("#downArrow");
 
-window.addEventListener("keydown", changeDirection);
+
+
+// window.addEventListener("keydown", changeDirection);
+leftArrow.addEventListener("click", turnLeft);
+rightArrow.addEventListener("click", turnRight);
+upArrow.addEventListener("click", turnUp);
+downArrow.addEventListener("click", turnDown);
+
 resetBtn.addEventListener("click", resetGame);
 
 gameStart();
@@ -90,34 +101,73 @@ function drawSnake(){
         ctx.strokeRect(snakePart.x, snakePart.y, unitSize, unitSize);
     })
 };
-function changeDirection(event){
-    const keyPressed = event.keyCode;
-    const LEFT = 37;
-    const UP = 38;
-    const RIGHT = 39;
-    const DOWN = 40;
-
+function turnDown(){
     const goingUp = (yVelocity == -unitSize);
-    const goingDown = (yVelocity == unitSize);
-    const goingRight = (xVelocity == unitSize);
-    const goingLeft = (xVelocity == -unitSize);
-
-    switch(true){
-        case(keyPressed == LEFT && !goingRight):
-            xVelocity = -unitSize;
-            yVelocity = 0;
-            break;
-        case(keyPressed == UP && !goingDown):
-        xVelocity = 0;
-        yVelocity = -unitSize;
-        break;
-        case(keyPressed == RIGHT && !goingLeft):
-        xVelocity = unitSize;
-        yVelocity = 0;
-        break;
-        case(keyPressed == DOWN && !goingUp):
+    if (!goingUp) {
         xVelocity = 0;
         yVelocity = unitSize;
-        break;
     }
+}
+function turnRight(){
+    const goingLeft = (xVelocity == -unitSize);
+    if (!goingLeft) {
+        xVelocity = unitSize;
+        yVelocity = 0;
+    }
+    
+}
+function turnUp(){
+    const goingDown = (yVelocity == unitSize);
+    if (!goingDown) {
+        xVelocity = 0;
+        yVelocity = -unitSize;
+    }
+}
+function turnLeft(){
+    const goingRight = (xVelocity == unitSize);
+        if (!goingRight) {
+            xVelocity = -unitSize;
+            yVelocity = 0;
+        }
+}
+function checkGameOver(){
+    switch(true){
+        case(snake[0].x < 0):
+         running = false;
+         break;
+        case(snake[0].x >= gameWidth):
+         running = false;
+         break;
+        case(snake[0].y < 0):
+         running = false;
+         break;
+        case(snake[0].y >= gameHeight):
+         running = false;
+         break;
+    }
+    for (let i = 1; i < snake.length; i++) {
+        if (snake[i].x == snake[0].x && snake[i].y == snake[0].y) {
+            running = false;
+        }
+    }
+}
+function displayGameOver(){
+    ctx.font = "50px MV Boli";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.fillText("GAME OVER!", gameWidth / 2, gameHeight / 2);
+    running = false;
+}
+function resetGame(){
+    score = 0;
+    xVelocity = unitSize;
+    yVelocity = 0;
+    snake = [
+        {x:unitSize * 4, y:0},
+        {x:unitSize * 3, y:0},
+        {x:unitSize * 2, y:0},
+        {x:unitSize, y:0},
+        {x:0, y:0}
+    ];
+    gameStart();
 }
